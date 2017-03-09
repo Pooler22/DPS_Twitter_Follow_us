@@ -10,13 +10,6 @@ namespace EDWI
 {
     internal static class Edwi
     {
-        public class ValueCount
-        {
-            public string Value;
-            public int Count;
-        }
-
-
         private static void Main()
         {
             var urlsList = new List<string>
@@ -27,13 +20,11 @@ namespace EDWI
             const string htmlStartTemplate = @"<!doctype html>
                             <html lang='en'>
                             <head>
-                            <meta charset = 'utf-8'>
-                            <title > The HTML5</title>
-                            <meta name = 'description' content = 'The HTML5'>
-                            <meta name = 'author' content = 'SitePoint'>
+                            <meta charset='utf-8'>
+                            <title>DPS Twitter Follow us</title>
                             </head>
                             <body>";
-            const string htmlEdnTemplate = "</body></html>";
+            const string htmlEndTemplate = "</body></html>";
 
             var regexProfileDsp = new Regex("<a [^>]*href=(?:'/profil(?<href>.*?)')|(?:\"/profil(?<href>.*?)\")", RegexOptions.IgnoreCase);
             var regexProfileTwitter = new Regex("<a [^>]*href=(?:'https://twitter.com/(?<href>.*?)')|(?:\"https://twitter.com/(?<href>.*?)\")", RegexOptions.IgnoreCase);
@@ -41,24 +32,34 @@ namespace EDWI
 
             urlsList.ForEach(urlAddress =>
             {
-                var tmp = "";
-                var urls = regexProfileDsp.Matches(urlAddress.GetDataFromUrl()).OfType<Match>().Select(m => m.Groups["href"].Value);
                 var i = 0;
-
-                foreach (var urlProfileDsp in urls)
+                var twitterButtons = "";
+                var urlsProfileDsp = regexProfileDsp
+                                .Matches(urlAddress.GetDataFromUrl())
+                                .OfType<Match>()
+                                .Select(m => m.Groups["href"].Value);
+                
+                foreach (var urlProfile in urlsProfileDsp.AsParallel())
                 {
-                    var urlsTwitter = regexProfileTwitter.Matches((prefixUrlProfileDsp + urlProfileDsp).GetDataFromUrl()).OfType<Match>().Select(m => m.Groups["href"].Value);
-                    foreach (var s in urlsTwitter)
-                    {
-                        tmp += "<a class='twitter-follow-button' href='https://twitter.com/" + s + "'>Follow @" + s + "</a></br>";
-                    }
+                    var urlsTwitter = regexProfileTwitter
+                                            .Matches((prefixUrlProfileDsp + urlProfile)
+                                            .GetDataFromUrl())
+                                            .OfType<Match>()
+                                            .Select(m => m.Groups["href"].Value);
+                    twitterButtons = Enumerable.Aggregate(urlsTwitter.AsParallel(), twitterButtons, GenerateButton());
+
                     Console.WriteLine(i++ + "/~800");
                 }
 
-                (htmlStartTemplate + tmp + htmlEdnTemplate)
+                (htmlStartTemplate + twitterButtons + htmlEndTemplate)
                     .SaveToFile(urlAddress
                                     .GetFileNameFormUrl(".html"));
             });
+        }
+
+        private static Func<string, string, string> GenerateButton()
+        {
+            return (current, s) => current + ("<a class='twitter-follow-button' href='https://twitter.com/" + s + "'>Follow @" + s + "</a></br>");
         }
 
         private static string GetDataFromUrl(this string urlAddress1)
