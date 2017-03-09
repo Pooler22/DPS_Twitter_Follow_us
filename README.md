@@ -5,3 +5,5 @@ Skrypt odpywuje stonę z listą uczestników DSP po czym sprawdza czy dany uczes
 Wynik zapisywany jest do folderu: <flder_projektu>/bin/Debug
 
 Program przygotowany wyłącznie w celu edukacyjnym.
+
+Demo: https://pooler22.github.io/DPS_Twitter_Follow_us/http%20__uczestnicy.dajsiepoznac.pl_lista.html
