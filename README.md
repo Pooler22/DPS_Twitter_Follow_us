@@ -1,9 +1,7 @@
-# EDWI
-PŁ - Eksploracja Danych w Internecie.
+# DPS_Twitter_Follow_us
 
-Learning data mining.
-Lab 1 - filtering of html pages to obtain text
+Skrypt odpywuje stonę z listą uczestników DSP po czym sprawdza czy dany uczestnik udostępnił link do twittera.
 
-Code features:
-- Learning approach functional programming
-- Usign extension method and linq
+Wynik zapisywany jest do folderu: <flder_projektu>/bin/Debug
+
+Program przygotowany wyłącznie w celu edukacyjnym.
